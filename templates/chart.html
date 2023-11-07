@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real-time Chart</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@1.27.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
@@ -15,7 +14,7 @@
     <button onclick="pauseChart()">Pause Chart</button>
     <script>
       const ctx = document.getElementById('chart');
-      const labels = [];
+      const labels = []; // Define X-axis labels
       const data = {
         labels: labels,
         datasets: [
@@ -35,6 +34,8 @@
                 streaming: {
                     duration: 20000,
                     frameRate: 30,
+                    // ttl: 60000,
+                    // refresh: 100,
                 }
             },
             scales: {
@@ -42,18 +43,11 @@
                     type: 'realtime',
                     realtime: {
                         onRefresh: chart => {
-                            var socket = io.connect('http://' + document.domain + ':' + location.port);
-                            var socket_value;
-
-                            socket.on('websocket_data', function(data) {
-                                socket_value = data.number;
-                                console.log(socket_value)
-                                const now = new Date().getTime();
-                                chart.data.labels.push(now);
-                                chart.data.datasets[0].data.push({
-                                    x: now,
-                                    y: socket_value
-                                });
+                            const now = new Date().getTime();
+                            chart.data.labels.push(now);
+                            chart.data.datasets[0].data.push({
+                                x: now,
+                                y: Math.random()
                             });
                         },
                     },
