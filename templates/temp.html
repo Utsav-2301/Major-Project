@@ -21,7 +21,7 @@
   </head>
   <body>
     <canvas id="chart" width="2"></canvas>
-    <button onclick="pauseChart(true)">Pause Chart</button>
+    <button id="pauseButton" onclick="pauseChart()">Pause Chart</button>
     <script
       type="text/javascript"
       src="{{ url_for('static', filename = 'js/app.js') }}"

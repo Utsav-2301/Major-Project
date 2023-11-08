@@ -34,19 +34,15 @@ $(document).ready(function () {
           type: 'realtime',
           realtime: {
             onRefresh: function (chart) {
-              if (isChartUpdating && !chart.options.plugins.streaming.pause) {
-                // Check if the chart should update and if it's not paused
-                const now = Date.now()
-                if (web_socket_data) {
-                  // Use data from the WebSocket if available
-                  const dataValue = web_socket_data.value // Replace 'web_socket_data.value' with the actual field name
-                  labels.push(now)
-                  chart.data.datasets[0].data.push({
-                    x: now,
-                    y: dataValue,
-                  })
-                  chart.update()
-                }
+              const now = Date.now()
+              if (web_socket_data) {
+                const dataValue = web_socket_data.value
+                labels.push(now)
+                chart.data.datasets[0].data.push({
+                  x: now,
+                  y: dataValue,
+                })
+                chart.update()
               }
             },
           },
@@ -58,46 +54,21 @@ $(document).ready(function () {
     },
   }
 
-  // Create the WebSocket connection
   const socket = io.connect()
-
-  // Attach the event handler for 'updateSensorData' here
   socket.on('updateSensorData', function (data) {
     console.log('Received data:', data)
-
-    // Store the WebSocket data for later use
     web_socket_data = data
-
-    // Update the chart with data from WebSocket (if the chart isn't paused)
-    if (isChartUpdating && !myChart.options.plugins.streaming.pause) {
-      const now = Date.now()
-      const dataValue = data.value
-      labels.push(now)
-      myChart.data.datasets[0].data.push({
-        x: now,
-        y: dataValue,
-      })
-      myChart.update()
-    }
   })
-
-  const myChart = new Chart(ctx, config)
-})
-function pauseChart(pauseWebSocket) {
-  if (myChart) {
+  function pauseChart() {
     if (myChart.options.plugins.streaming.pause === false) {
       myChart.options.plugins.streaming.pause = true
-      if (pauseWebSocket) {
-        // Pause WebSocket updates
-        isChartUpdating = false
-      }
     } else {
       myChart.options.plugins.streaming.pause = false
-      if (pauseWebSocket) {
-        // Resume WebSocket updates
-        isChartUpdating = true
-      }
     }
-    myChart.update()
+    chart.update()
   }
-}
+  $('#pauseButton').on('click', function () {
+    pauseChart()
+  })
+  const myChart = new Chart(ctx, config)
+})
