@@ -1,21 +1,18 @@
-let myChart
-let isChartUpdating = true
 $(document).ready(function () {
-  const ctx = document.getElementById('chart')
+  const ctx = document.getElementById('chart1')
   const labels = []
   const data = {
     labels: labels,
     datasets: [
       {
         data: [],
+        label: 'Measuring Current (with Varying Resistance) with Time',
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1,
       },
     ],
   }
-
-  // let isChartUpdating = true // Variable to track chart update state
   let web_socket_data = null // Variable to store WebSocket data
 
   const config = {
@@ -31,9 +28,14 @@ $(document).ready(function () {
       },
       scales: {
         x: {
+          title: {
+            display: true,
+            text: 'Time Axis', // Change this text to your desired label
+          },
           type: 'realtime',
           realtime: {
             onRefresh: function (chart) {
+              // const now = web_socket_data.date
               const now = Date.now()
               if (web_socket_data) {
                 const dataValue = web_socket_data.value
@@ -48,6 +50,10 @@ $(document).ready(function () {
           },
         },
         y: {
+          title: {
+            display: true,
+            text: 'Current Axis', // Change this text to your desired label
+          },
           beginAtZero: true,
         },
       },
@@ -65,7 +71,7 @@ $(document).ready(function () {
     } else {
       myChart.options.plugins.streaming.pause = false
     }
-    chart.update()
+    myChart.update()
   }
   $('#pauseButton').on('click', function () {
     pauseChart()

@@ -20,11 +20,70 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0"></script>
   </head>
   <body>
-    <canvas id="chart" width="2"></canvas>
-    <button id="pauseButton" onclick="pauseChart()">Pause Chart</button>
+    <form id="myForm">
+      <label for="current_value">Current Value:</label>
+      <input type="number" id="current_value" name="current_value"/><br/><br/>
+      <label for="resistance_value">Resistance Value:</label>
+      <input type="number" id="resistance_value" name="resistance_value" />
+      <button type="button" onclick="sendData()">Plot Graph</button>
+      <button type="button" onclick="downloadData()">Download Data</button>
+      <button id="downloadButton" style="display: none;" onclick="downloadData()">Download Data</button>
+    </form>
+
+
+    
+    <script>
+      function sendData() {
+        var current_value = document.getElementById('current_value').value
+        var resistance_value = document.getElementById('resistance_value').value
+        var plot_graph = 'True'
+
+        // Using fetch to send a POST request to the Flask backend
+        fetch('/receive-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            current_value: current_value,
+            resistance_value: resistance_value,
+            plot_graph: plot_graph,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error('Error:', error))
+      }
+    </script>
+
+    <script>
+      function downloadData() {
+        // Using fetch to send a GET request to download the data
+        fetch('/download-data')
+          .then((response) => response.blob())
+          .then((blob) => {
+            // Create a temporary link element to trigger the download
+            const link = document.createElement('a')
+            link.href = URL.createObjectURL(blob)
+            link.download = 'voltage_data.txt'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+          })
+          .catch((error) => console.error('Error:', error))
+      }
+    </script>
+
+    <canvas id="chart1" width="2"></canvas>
+    <button id="pauseButton">Pause Chart</button>
     <script
       type="text/javascript"
-      src="{{ url_for('static', filename = 'js/app.js') }}"
+      src="{{ url_for('static', filename = 'js/chart1.js') }}"
+    ></script>
+    <canvas id="chart2" width="2"></canvas>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename = 'js/chart2.js') }}"
     ></script>
   </body>
 </html>

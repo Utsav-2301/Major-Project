@@ -13,8 +13,8 @@
     <canvas id="chart" height="200" width="400"></canvas>
     <button onclick="pauseChart()">Pause Chart</button>
     <script>
-      const ctx = document.getElementById('chart');
-      const labels = []; // Define X-axis labels
+      const ctx = document.getElementById('chart')
+      const labels = [] // Define X-axis labels
       const data = {
         labels: labels,
         datasets: [
@@ -25,48 +25,48 @@
             tension: 0.1,
           },
         ],
-      };
+      }
       const config = {
         type: 'line',
         data: data,
         options: {
-            plugins: {
-                streaming: {
-                    duration: 20000,
-                    frameRate: 30,
-                    // ttl: 60000,
-                    // refresh: 100,
-                }
+          plugins: {
+            streaming: {
+              duration: 20000,
+              frameRate: 30,
+              // ttl: 60000,
+              // refresh: 100,
             },
-            scales: {
-                x: {
-                    type: 'realtime',
-                    realtime: {
-                        onRefresh: chart => {
-                            const now = new Date().getTime();
-                            chart.data.labels.push(now);
-                            chart.data.datasets[0].data.push({
-                                x: now,
-                                y: Math.random()
-                            });
-                        },
-                    },
+          },
+          scales: {
+            x: {
+              type: 'realtime',
+              realtime: {
+                onRefresh: (chart) => {
+                  const now = new Date().getTime()
+                  chart.data.labels.push(now)
+                  chart.data.datasets[0].data.push({
+                    x: now,
+                    y: Math.random(),
+                  })
                 },
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-      };
-      function pauseChart(){
-        if(myChart.options.plugins.streaming.pause === false){
-            myChart.options.plugins.streaming.pause = true;
-        }else{
-            myChart.options.plugins.streaming.pause = false;
-        }
-        chart.update();
+              },
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
       }
-      var myChart = new Chart(ctx, config);
+      function pauseChart() {
+        if (myChart.options.plugins.streaming.pause === false) {
+          myChart.options.plugins.streaming.pause = true
+        } else {
+          myChart.options.plugins.streaming.pause = false
+        }
+        chart.update()
+      }
+      var myChart = new Chart(ctx, config)
     </script>
   </body>
 </html>
